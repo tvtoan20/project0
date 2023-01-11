@@ -1,0 +1,43 @@
+- name: NGINX --> Install the nginx packages for Ubuntu target
+  become: yes
+  apt:
+    name: "nginx"
+    update-cache: yes
+
+- name: Check nginx status
+  shell: bash -lc "systemctl status nginx"
+  register: nginx_status
+- debug:
+    var: nginx_status.stdout_lines
+
+- name: NGINX --> Copy extra/sites configuration files
+  become: yes
+  template:
+    src: nginxcf.j2
+    dest: "{{ nginx_cf }}/nginxcf"
+- name: Ansible delete file default
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+#- name: NGINX --> Config file html
+#  template:
+#    src: index.html.j2
+#    dest: "{{ nginx_html_dir }}/index.html"
+
+#Configure Firewall
+- name: Allow Nginx
+  become: yes
+  ufw:
+    rule: allow
+    name: Nginx HTTP
+- name: UFW - Allow SSH
+  ufw:
+    rule: allow
+    port: ssh
+- name: enable UFW
+  ufw:
+    state: enabled
+- name: Reload nginx
+  service:
+    name: nginx
+    state: reloaded

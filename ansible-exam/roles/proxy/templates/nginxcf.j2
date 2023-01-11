@@ -1,0 +1,9 @@
+ server {
+        listen 80;
+
+        server_name nginx-tutorial.test;
+
+        location / {
+           proxy_pass "http://192.168.140.6";
+        }
+    }
