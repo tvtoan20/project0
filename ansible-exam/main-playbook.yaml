@@ -8,3 +8,13 @@
   - vars/front.yaml
   roles:
   - nginx
+
+- hosts: proxy
+  user: "{{ ansible_ssh_user }}"
+  become_method: sudo
+  gather_facts: True
+  become: yes
+  vars_files:
+  - vars/front.yaml
+  roles:
+  - proxy
